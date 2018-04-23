@@ -1,29 +1,28 @@
-package com.auth;
-
+package com.auth.config;
 
 import com.auth.user.UserDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-@SpringBootApplication
-@RestController
-public class AuthServerApplication extends WebSecurityConfigurerAdapter {
-
+/**
+ * spring Security配置
+ */
+@Configuration
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
         http
                 .formLogin()
-                .loginPage("/signin")
-                .loginProcessingUrl("/signin/authenticate")
+                .loginPage("/authentication/require")
+                .loginProcessingUrl("/authentication/form")
                 .failureUrl("/signin?error=bad_credentials")
                 .and()
                 .logout()
@@ -31,21 +30,29 @@ public class AuthServerApplication extends WebSecurityConfigurerAdapter {
                 .deleteCookies("JSESSIONID")
                 .and()
                 .authorizeRequests()
-                .antMatchers("/favicon.ico", "/signin", "/signup", "/connect/facebook").permitAll()
+                .antMatchers("/favicon.ico",
+                        "/authentication/require",
+                        "/authentication/form",
+                        "/**/*.js",
+                        "/**/*.css",
+                        "/**/*.jpg",
+                        "/**/*.png",
+                        "/**/*.woff2").permitAll()
                 .antMatchers("/**").authenticated()
                 .and()
                 .rememberMe()
             /*.and()
-	            .apply(new SpringSocialConfigurer())*/
+                .apply(new SpringSocialConfigurer())*/
                 .and()
                 .headers()
-                .frameOptions().disable(); // ulalala... dangerous
+                .frameOptions().disable()// ulalala... dangerous
+                .and().csrf().disable();
     }
 
 
     @Autowired
     private UserDetailService userDetailService;
-	
+
 	/*@Override
 	public void run(String... args) throws Exception {
 		User user = new User();
@@ -53,13 +60,13 @@ public class AuthServerApplication extends WebSecurityConfigurerAdapter {
 		user.setPassword("{noop}doe");
 		user.addAuthority(new SimpleGrantedAuthority("LOCALUSER"));
 		userRepository.save(user);
-		
+
 	}*/
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth
-                .userDetailsService(userDetailService);
+                .userDetailsService(userDetailService).passwordEncoder(new BCryptPasswordEncoder());
     }
 
     @Override
@@ -68,10 +75,4 @@ public class AuthServerApplication extends WebSecurityConfigurerAdapter {
         // TODO Auto-generated method stub
         return super.authenticationManagerBean();
     }
-
-    public static void main(String[] args) {
-        SpringApplication.run(AuthServerApplication.class, args);
-    }
-
-
 }

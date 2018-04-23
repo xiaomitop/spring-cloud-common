@@ -1,4 +1,4 @@
-package com.auth;
+package com.auth.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -20,7 +20,7 @@ import java.util.Arrays;
 
 @Configuration
 @EnableAuthorizationServer
-public class AuthServerConfig extends AuthorizationServerConfigurerAdapter {
+public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
 	@Override
 	public void configure(AuthorizationServerSecurityConfigurer oauthServer) throws Exception {
 		oauthServer
@@ -70,7 +70,7 @@ public class AuthServerConfig extends AuthorizationServerConfigurerAdapter {
 					.scopes("read", "write")
 					.autoApprove(true)
 					.authorizedGrantTypes("authorization_code", "client_credentials", "password", "implicit")
-					.redirectUris("http://localhost:4200/", "https://fseebach.de")
+					//.redirectUris("http://localhost:4200/", "https://fseebach.de")
 					.accessTokenValiditySeconds(60);
 	}
 	

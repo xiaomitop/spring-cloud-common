@@ -4,9 +4,9 @@
 <head>
     <meta charset="utf-8">
     <title>登录界面</title>
-    <link rel="stylesheet" href="/uaa/css/reset.css"/>
-    <link rel="stylesheet" href="/uaa/css/common.css"/>
-    <link rel="stylesheet" href="/uaa/css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="/auth/css/reset.css"/>
+    <link rel="stylesheet" href="/auth/css/common.css"/>
+    <link rel="stylesheet" href="/auth/css/font-awesome.min.css"/>
 </head>
 <body>
 <div class="wrap login_wrap">
@@ -18,7 +18,7 @@
                 <div class="login_title">
                     登录
                 </div>
-                <form action="/uaa/authentication/form" method="post">
+                <form action="/auth/authentication/form" method="post">
 
                     <div class="form_text_ipt">
                         <input name="username" type="text" placeholder="手机号/邮箱" value="admin">
@@ -58,7 +58,7 @@
         </div>
     </div>
 </div>
-<script type="text/javascript" src="/uaa/js/jquery.min.js"></script>
-<script type="text/javascript" src="/uaa/js/common.js"></script>
+<script type="text/javascript" src="/auth/js/jquery.min.js"></script>
+<script type="text/javascript" src="/auth/js/common.js"></script>
 </body>
 </html>

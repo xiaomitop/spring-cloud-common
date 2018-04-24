@@ -1,0 +1,21 @@
+server:
+  port: 8082
+
+eureka:
+  instance:
+    lease-renewal-interval-in-seconds: 60 #每间隔60s，向服务端发送一次心跳，证明自己依然"存活"
+    lease-expiration-duration-in-seconds: 120 #告诉服务端，如果我120s之内没有给你发心跳，就代表我"死"了，将我踢出掉。
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8080/eureka/
+
+spring:
+  application:
+    name: config-service
+  profiles:
+    active: native
+  cloud:
+    config:
+      server:
+        native:
+          searchLocations: classpath:/config/

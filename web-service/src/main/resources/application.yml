@@ -1,0 +1,29 @@
+server:
+  port: 7071
+  servlet:
+    context-path: /web
+
+eureka:
+  instance:
+    lease-renewal-interval-in-seconds: 60
+    lease-expiration-duration-in-seconds: 120
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8080/eureka/
+
+spring:
+  application:
+    name: web-service
+
+
+auth-server: http://localhost:7070/auth # sso-server地址
+security:
+  oauth2:
+    client:
+      client-id: acme
+      client-secret: acmesecret
+      user-authorization-uri: ${auth-server}/oauth/authorize #请求认证的地址
+      access-token-uri: ${auth-server}/oauth/token #请求令牌的地址
+    resource:
+      jwt:
+        key-uri: ${auth-server}/oauth/token_key #解析jwt令牌所需要密钥的地址

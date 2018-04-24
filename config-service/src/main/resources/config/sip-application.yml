@@ -1,0 +1,74 @@
+#服务注册中心端口号
+server:
+  port: 7071
+
+eureka:
+  instance:
+    lease-renewal-interval-in-seconds: 60 #每间隔60s，向服务端发送一次心跳，证明自己依然"存活"
+    lease-expiration-duration-in-seconds: 120 #告诉服务端，如果我120s之内没有给你发心跳，就代表我"死"了，将我踢出掉。
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8080/eureka/
+
+mybatis:
+  mapperLocations: classpath:mybatis/mapper/*.xml
+  typeAliasesPackage: com.common.**.bo
+  configLocation: classpath:mybatis/mybatis-config.xml
+
+spring:
+  application:
+      name: sip-service
+
+    #开启aop支持
+    aop:
+      proxy-target-class: true
+
+    # HTTP ENCODING
+    http:
+      encoding:
+        charset: UTF-8
+        force: true
+        enabled: true
+
+  # redis
+  redis:
+    # Redis服务器地址
+    host: 192.168.3.8
+    # Redis服务器连接端口
+    port: 6379
+    # Redis服务器连接密码（默认为空）
+    password: Jhws1234321
+    # 连接超时时间（毫秒）
+    timeout: 3000
+    pool:
+       # 连接池最大连接数（使用负值表示没有限制）
+       max-active: 200
+       # 连接池中的最大空闲连接
+       min-idle: 50
+       # 连接池最大阻塞等待时间（使用负值表示没有限制）
+       max-wait: -1
+       # 连接池中的最小空闲连接
+       max-idle: 8
+
+  # datasource
+  datasource:
+    name: db
+    type: com.alibaba.druid.pool.DruidDataSource
+    url: jdbc:mysql://192.168.3.8:3306/web_common_db?useUnicode=true&characterEncoding=utf8
+    username: root
+    password: password
+    driver-class-name: com.mysql.jdbc.Driver
+    minIdle: 5
+    maxActive: 100
+    initialSize: 10
+    maxWait: 60000
+    timeBetweenEvictionRunsMillis: 60000
+    minEvictableIdleTimeMillis: 300000
+    validationQuery: select 'x'
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+    poolPreparedStatements: true
+    maxPoolPreparedStatementPerConnectionSize: 50
+    removeAbandoned: true
+    filters: stat

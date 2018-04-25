@@ -22,8 +22,10 @@ security:
     client:
       client-id: acme
       client-secret: acmesecret
-      user-authorization-uri: ${auth-server}/oauth/authorize #请求认证的地址
-      access-token-uri: ${auth-server}/oauth/token #请求令牌的地址
+      access-token-uri: ${auth-server}/oauth/token
+      user-authorization-uri: ${auth-server}/oauth/authorize
     resource:
+      user-info-uri: ${auth-server}/user
+      prefer-token-info: false
       jwt:
-        key-uri: ${auth-server}/oauth/token_key #解析jwt令牌所需要密钥的地址
+        key-uri: ${auth-server}/oauth/token_key

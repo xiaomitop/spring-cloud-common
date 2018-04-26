@@ -69,7 +69,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 					.secret("{noop}acmesecret")
 					.scopes("read", "write")
 					.autoApprove(true)
-					.authorizedGrantTypes("authorization_code", "client_credentials", "password", "implicit")
+					.authorizedGrantTypes("authorization_code", "client_credentials", "refresh_token", "password", "implicit")
 					//.redirectUris("http://localhost:4200/", "https://fseebach.de")
 					.accessTokenValiditySeconds(60);
 	}

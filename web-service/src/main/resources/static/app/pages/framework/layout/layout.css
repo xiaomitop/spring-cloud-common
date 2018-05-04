@@ -1,0 +1,26 @@
+.logo {
+    height: 35px;
+    margin: 12px 28px 16px -40px;
+    float: left;
+}
+
+.logo img {
+    margin: 0 0 25px 5px;
+    height: 100%;
+}
+
+.logo strong {
+    color: white;
+    font-size: 20px;
+    position: absolute;
+    margin: auto;
+    top: 0;
+    bottom: 0;
+}
+
+.head_menu {
+    float: right;
+    line-height: 64px;
+    background: transparent;
+    margin: 0 -45px 0 0;
+}

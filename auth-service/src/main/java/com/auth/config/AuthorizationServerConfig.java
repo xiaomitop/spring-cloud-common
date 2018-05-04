@@ -23,9 +23,14 @@ import java.util.Arrays;
 public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
 	@Override
 	public void configure(AuthorizationServerSecurityConfigurer oauthServer) throws Exception {
+		/*oauthServer
+			.tokenKeyAccess("permitAll()")
+			.checkTokenAccess("isAuthenticated()");*/
+
 		oauthServer
-			.tokenKeyAccess("isAuthenticated()")
-			.checkTokenAccess("isAuthenticated()");
+				.tokenKeyAccess("permitAll()") //url:/oauth/token_key,exposes public key for token verification if using JWT tokens
+				.checkTokenAccess("isAuthenticated()") //url:/oauth/check_token allow check token
+				.allowFormAuthenticationForClients();
 	}
 	
 	@Bean

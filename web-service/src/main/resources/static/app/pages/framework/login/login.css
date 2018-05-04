@@ -1,0 +1,44 @@
+
+.box {
+    margin-top: 100px;
+    width: 100%;
+    height: 600px;
+    background: url(../../images/hr_login.png) no-repeat center;
+    padding-top: 50px;
+}
+
+.cnt {
+    width: 380px;
+    height: 380px;
+    background: #fff;
+    float: right;
+    margin-right: 15%;
+    padding: 40px 40px 40px 40px;
+}
+
+.cnt_one {
+    color: #000;
+    font-size: 20px;
+    font-weight: 600;
+    padding-right: 120px;
+}
+
+.cnt_two {
+    color: blue;
+    float: right;
+    font-size: 18px;
+}
+
+#huanying {
+    padding-bottom: 10px;
+}
+
+.ver_code img{
+    padding-left: 10px;
+    vertical-align: middle;
+    margin-top: -5px;
+}
+
+.ver_code input{
+    width: 210px;
+}

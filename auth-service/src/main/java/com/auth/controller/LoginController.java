@@ -1,8 +1,14 @@
 package com.auth.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.Mapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.ModelAndView;
+
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /**
  * Created on 2018/1/25 0025.
@@ -13,10 +19,14 @@ import org.springframework.web.servlet.ModelAndView;
  */
 @RestController
 public class LoginController {
+    //@Autowired
+    //private RestTemplate template;
 
-    @GetMapping("/authentication/require")
-    public ModelAndView require() {
+    @RequestMapping("/authentication/require")
+    public void require(HttpServletResponse response) throws IOException {
         System.out.println("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
-        return new ModelAndView("ftl/login");
+        //return template.getForEntity("http://localhost:8081/web/login", ModelAndView.class).getBody();\
+        response.sendRedirect("http://localhost:8081/web/login");
+        //return "redirect: http://localhost:8081/web/login";
     }
 }

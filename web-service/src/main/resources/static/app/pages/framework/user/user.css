@@ -1,0 +1,23 @@
+
+.operation {
+    margin: 0 auto;
+}
+
+.operation button {
+    margin-left: 10px;
+}
+
+.head_div {
+    width: 100%;
+    overflow: hidden;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.head_div button {
+    float: right;
+}
+
+.hide {
+    display: none;
+}

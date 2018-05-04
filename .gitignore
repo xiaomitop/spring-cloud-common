@@ -24,3 +24,8 @@
 /dist/
 /nbdist/
 /.nb-gradle/
+
+### node.js ###
+/web-service/node_modules
+/web-service/package-lock.json
+/web-service/**/bundle

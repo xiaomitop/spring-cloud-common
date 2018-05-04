@@ -13,19 +13,19 @@ eureka:
     serviceUrl:
       defaultZone: http://localhost:8080/eureka/
 
-auth-server: http://localhost:7070/auth # sso-server地址
-security:
-  oauth2:
-    client:
-      client-id: acme
-      client-secret: acmesecret
-      access-token-uri: ${auth-server}/oauth/token
-      user-authorization-uri: ${auth-server}/oauth/authorize
-    resource:
-      user-info-uri: ${auth-server}/user
-      prefer-token-info: false
-      jwt:
-        key-uri: ${auth-server}/oauth/token_key
+#auth-server: http://localhost:7070/auth # sso-server地址
+#security:
+#  oauth2:
+#    client:
+#      client-id: acme
+#      client-secret: acmesecret
+#      access-token-uri: ${auth-server}/oauth/token
+#      user-authorization-uri: ${auth-server}/oauth/authorize
+#    resource:
+#      user-info-uri: ${auth-server}/user
+#      prefer-token-info: false
+#      jwt:
+#        key-uri: ${auth-server}/oauth/token_key
 
 zuul:
   ignoredServices: '*' #忽略所有微服务，只路由指定微服务

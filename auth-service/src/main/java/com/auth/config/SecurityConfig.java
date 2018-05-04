@@ -21,7 +21,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http
                 .formLogin()
-                .loginPage("/authentication/require")
+                .loginPage("/authentication/require").permitAll()
                 .loginProcessingUrl("/authentication/form")
                 .failureUrl("/signin?error=bad_credentials")
                 .and()
@@ -31,7 +31,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/favicon.ico",
-                        "/authentication/require",
                         "/authentication/form",
                         "/**/*.js",
                         "/**/*.css",
@@ -47,6 +46,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .headers()
                 .frameOptions().disable()// ulalala... dangerous
                 .and().csrf().disable();
+
+        http.requestMatchers().antMatchers("/oauth/**")
+                .and()
+                .authorizeRequests()
+                .antMatchers("/oauth/**").authenticated();
     }
 
 

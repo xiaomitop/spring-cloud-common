@@ -1,5 +1,6 @@
 package com.zuul.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.oauth2.client.EnableOAuth2Sso;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,6 +13,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
+import org.springframework.security.oauth2.provider.token.DefaultAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
@@ -30,6 +32,9 @@ import java.security.NoSuchAlgorithmException;
 //@EnableOAuth2Sso
 @EnableResourceServer
 public class SecurityConfig extends ResourceServerConfigurerAdapter {
+
+    @Autowired
+    private JwtAccessTokenConverter jatc;
 
     /**
      * Configure.
@@ -66,8 +71,15 @@ public class SecurityConfig extends ResourceServerConfigurerAdapter {
 //    }
     @Override
     public void configure(HttpSecurity http) throws Exception {
-        http.requestMatcher(new OAuthRequestedMatcher()).authorizeRequests().antMatchers(HttpMethod.OPTIONS).permitAll()
-                .anyRequest().authenticated();
+        /*http.requestMatcher(new OAuthRequestedMatcher()).authorizeRequests().antMatchers(HttpMethod.OPTIONS).permitAll()
+                .anyRequest().authenticated();*/
+
+        http.antMatcher("/**")
+                .authorizeRequests()
+                .antMatchers("/", "/login**", "/index")
+                .permitAll()
+                .anyRequest()
+                .authenticated();
         // @formatter:off
 //        http.requestMatcher(new OAuthRequestedMatcher()).authorizeRequests().antMatchers(HttpMethod.OPTIONS).permitAll()
 //                .antMatchers(
@@ -104,20 +116,15 @@ public class SecurityConfig extends ResourceServerConfigurerAdapter {
 
     @Bean
     public TokenStore tokenStore() {
-        return new JwtTokenStore(accessTokenConverter());
+
+        DefaultAccessTokenConverter datc  = new DefaultAccessTokenConverter();
+        datc.setUserTokenConverter(new JWTUserAuthenticationConverter());
+        jatc.setAccessTokenConverter(datc);
+        return new JwtTokenStore(jatc);
     }
 
     @Bean
     public JwtAccessTokenConverter accessTokenConverter() {
-        JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
-       /* Resource resource = new ClassPathResource("public.txt");
-        String publicKey = null;
-        try {
-            publicKey = inputStream2String(resource.getInputStream());
-        } catch (final IOException e) {
-            throw new RuntimeException(e);
-        }*/
-
         KeyPairGenerator keyGen = null;
         try {
             keyGen = KeyPairGenerator.getInstance("RSA");
@@ -125,9 +132,8 @@ public class SecurityConfig extends ResourceServerConfigurerAdapter {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-
+        JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
         converter.setKeyPair(keyGen.generateKeyPair());
-        converter.setAccessTokenConverter(new CustomerAccessTokenConverter());
         return converter;
     }
 
@@ -137,16 +143,6 @@ public class SecurityConfig extends ResourceServerConfigurerAdapter {
         final DefaultTokenServices defaultTokenServices = new DefaultTokenServices();
         defaultTokenServices.setTokenStore(tokenStore());
         return defaultTokenServices;
-    }
-
-    String inputStream2String(InputStream is) throws IOException {
-        BufferedReader in = new BufferedReader(new InputStreamReader(is));
-        StringBuffer buffer = new StringBuffer();
-        String line = "";
-        while ((line = in.readLine()) != null) {
-            buffer.append(line);
-        }
-        return buffer.toString();
     }
 
 }

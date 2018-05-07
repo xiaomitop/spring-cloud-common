@@ -123,7 +123,7 @@ public class SecurityConfig extends ResourceServerConfigurerAdapter {
         return new JwtTokenStore(jatc);
     }
 
-    @Bean
+   /* @Bean
     public JwtAccessTokenConverter accessTokenConverter() {
         KeyPairGenerator keyGen = null;
         try {
@@ -135,7 +135,7 @@ public class SecurityConfig extends ResourceServerConfigurerAdapter {
         JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
         converter.setKeyPair(keyGen.generateKeyPair());
         return converter;
-    }
+    }*/
 
     @Bean
     @Primary

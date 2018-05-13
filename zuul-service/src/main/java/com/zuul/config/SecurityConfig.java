@@ -1,30 +1,32 @@
 package com.zuul.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.security.oauth2.client.EnableOAuth2Sso;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
-import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
+import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationProcessingFilter;
+import org.springframework.security.oauth2.provider.error.DefaultWebResponseExceptionTranslator;
+import org.springframework.security.oauth2.provider.error.OAuth2AuthenticationEntryPoint;
+import org.springframework.security.oauth2.provider.error.OAuth2ExceptionRenderer;
+import org.springframework.security.oauth2.provider.error.WebResponseExceptionTranslator;
 import org.springframework.security.oauth2.provider.token.DefaultAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
+import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter;
 import org.springframework.security.web.util.matcher.RequestMatcher;
+import org.springframework.web.context.request.ServletWebRequest;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 
@@ -36,63 +38,42 @@ public class SecurityConfig extends ResourceServerConfigurerAdapter {
     @Autowired
     private JwtAccessTokenConverter jatc;
 
-    /**
-     * Configure.
-     *
-     * @param http the http
-     * @throws Exception the exception
-     */
-//    @Override
-//    public void configure(HttpSecurity http) throws Exception {
-//        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED).and().authorizeRequests()
-//                .antMatchers(
-//                        "/web/login",
-//                        "/auth/authentication/form",
-//                        "/auth/oauth/token",
-//                        "/**/*.js",
-//                        "/**/*.css",
-//                        "/**/*.jpg",
-//                        "/**/*.png").permitAll()
-//                .antMatchers("/**").authenticated()
-//                .and().csrf().disable();
-////        http
-////                .authorizeRequests()
-////                .antMatchers(
-////                        "/web/login",
-////                        "/auth/authentication/form",
-////                        "/auth/oauth/token",
-////                        "/**/*.js",
-////                        "/**/*.css",
-////                        "/**/*.jpg",
-////                        "/**/*.png").permitAll()
-////                .antMatchers("/**").authenticated()
-////                .and().csrf().disable();
-//        //http.csrf().disable();
-//    }
     @Override
     public void configure(HttpSecurity http) throws Exception {
-        /*http.requestMatcher(new OAuthRequestedMatcher()).authorizeRequests().antMatchers(HttpMethod.OPTIONS).permitAll()
-                .anyRequest().authenticated();*/
+        http.authorizeRequests()
+                .antMatchers(
+                        "/web/login",
+                        "/auth/authentication/form",
+                        "/auth/oauth/token",
+                        "/**/*.js",
+                        "/**/*.css",
+                        "/**/*.jpg",
+                        "/**/*.png").permitAll()
+                .antMatchers("/**").authenticated().and()
+                .csrf().disable();
+    }
 
-        http.antMatcher("/**")
-                .authorizeRequests()
-                .antMatchers("/", "/login**", "/index")
-                .permitAll()
-                .anyRequest()
-                .authenticated();
-        // @formatter:off
-//        http.requestMatcher(new OAuthRequestedMatcher()).authorizeRequests().antMatchers(HttpMethod.OPTIONS).permitAll()
-//                .antMatchers(
-//                        "/web/login",
-//                        "/auth/authentication/form",
-//                        "/auth/oauth/token",
-//                        "/**/*.js",
-//                        "/**/*.css",
-//                        "/**/*.jpg",
-//                        "/**/*.png").permitAll()
-//                .antMatchers("/**").authenticated()
-//                .and().csrf().disable();
-        // @formatter:on
+    @Bean
+    public WebResponseExceptionTranslator webResponseExceptionTranslator() {
+        return new DefaultWebResponseExceptionTranslator() {
+            @SuppressWarnings("unchecked")
+            @Override
+            public ResponseEntity<OAuth2Exception> translate(Exception e) throws Exception {
+                ResponseEntity responseEntity = super.translate(e);
+                OAuth2Exception body = (OAuth2Exception) responseEntity.getBody();
+                HttpHeaders headers = new HttpHeaders();
+                headers.setAll(responseEntity.getHeaders().toSingleValueMap());
+                // do something with header or response
+                if (401 == responseEntity.getStatusCode().value()) {
+                    //Response r = new Response();
+                    //r.setCodeAndMsg(401, "Invalid access token");
+                    return new ResponseEntity("aaaaaaaaaaaaaa", headers, responseEntity.getStatusCode());
+                } else {
+                    return new ResponseEntity(body, headers, responseEntity.getStatusCode());
+                }
+
+            }
+        };
     }
 
     private static class OAuthRequestedMatcher implements RequestMatcher {
@@ -112,12 +93,15 @@ public class SecurityConfig extends ResourceServerConfigurerAdapter {
     @Override
     public void configure(ResourceServerSecurityConfigurer config) {
         config.tokenServices(tokenServices());
+        OAuth2AuthenticationEntryPoint oAuth2AuthenticationEntryPoint = new OAuth2AuthenticationEntryPoint();
+        oAuth2AuthenticationEntryPoint.setExceptionTranslator(webResponseExceptionTranslator());
+        config.authenticationEntryPoint(oAuth2AuthenticationEntryPoint);
     }
 
     @Bean
     public TokenStore tokenStore() {
 
-        DefaultAccessTokenConverter datc  = new DefaultAccessTokenConverter();
+        DefaultAccessTokenConverter datc = new DefaultAccessTokenConverter();
         datc.setUserTokenConverter(new JWTUserAuthenticationConverter());
         jatc.setAccessTokenConverter(datc);
         return new JwtTokenStore(jatc);

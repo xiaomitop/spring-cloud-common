@@ -95,7 +95,7 @@ public class SecurityConfig extends ResourceServerConfigurerAdapter {
         config.tokenServices(tokenServices());
         OAuth2AuthenticationEntryPoint oAuth2AuthenticationEntryPoint = new OAuth2AuthenticationEntryPoint();
         oAuth2AuthenticationEntryPoint.setExceptionTranslator(webResponseExceptionTranslator());
-        config.authenticationEntryPoint(oAuth2AuthenticationEntryPoint);
+        //config.authenticationEntryPoint(oAuth2AuthenticationEntryPoint);
     }
 
     @Bean
